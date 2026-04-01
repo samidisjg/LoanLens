@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+outputs/figures/*.png
+outputs/reports/*.txt
+outputs/reports/*.json
+artifacts/model/*.joblib
+artifacts/metadata/*.json
