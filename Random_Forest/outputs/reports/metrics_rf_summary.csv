@@ -1,0 +1,2 @@
+n_estimators,max_depth,max_features,min_samples_split,min_samples_leaf,class_weight,train_accuracy,train_precision,train_recall,train_f1_score,train_roc_auc,train_average_precision,test_accuracy,test_precision,test_recall,test_f1_score,test_roc_auc,test_average_precision
+200,7,sqrt,15,6,,0.98825,0.9855907780979827,0.890625,0.9357045143638851,0.9987368063237463,0.9898553638546195,0.99,0.9574468085106383,0.9375,0.9473684210526315,0.9977299963126844,0.9844132298539616

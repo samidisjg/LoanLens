@@ -6,3 +6,4 @@ outputs/reports/*.txt
 outputs/reports/*.json
 artifacts/model/*.joblib
 artifacts/metadata/*.json
+.venv
