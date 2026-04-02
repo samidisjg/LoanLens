@@ -1,0 +1,6 @@
+{
+  "classifier__C": 2,
+  "classifier__gamma": "scale",
+  "classifier__kernel": "rbf",
+  "smote__k_neighbors": 3
+}

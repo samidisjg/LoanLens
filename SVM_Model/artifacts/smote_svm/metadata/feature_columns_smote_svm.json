@@ -1,0 +1,16 @@
+{
+  "feature_columns": [
+    "Age",
+    "Experience",
+    "Income",
+    "ZIP Code",
+    "Family",
+    "CCAvg",
+    "Education",
+    "Mortgage",
+    "Securities Account",
+    "CD Account",
+    "Online",
+    "CreditCard"
+  ]
+}
