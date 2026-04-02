@@ -1,0 +1,27 @@
+{
+  "best_params": {
+    "classifier__class_weight": null,
+    "classifier__max_depth": 7,
+    "classifier__max_features": "sqrt",
+    "classifier__min_samples_leaf": 6,
+    "classifier__min_samples_split": 15,
+    "classifier__n_estimators": 200,
+    "smote__k_neighbors": 3
+  },
+  "train_metrics": {
+    "accuracy": 0.98775,
+    "precision": 0.9075425790754258,
+    "recall": 0.9713541666666666,
+    "f1_score": 0.9383647798742139,
+    "roc_auc": 0.9977696061485988,
+    "average_precision": 0.9802680884504578
+  },
+  "test_metrics": {
+    "accuracy": 0.981,
+    "precision": 0.8532110091743119,
+    "recall": 0.96875,
+    "f1_score": 0.9073170731707317,
+    "roc_auc": 0.996439435840708,
+    "average_precision": 0.9698872834390212
+  }
+}

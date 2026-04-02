@@ -1,0 +1,41 @@
+Random Forest Dataset Summary
+==============================
+Shape: (5000, 14)
+
+Missing Values:
+ID                    0
+Age                   0
+Experience            0
+Income                0
+ZIP Code              0
+Family                0
+CCAvg                 0
+Education             0
+Mortgage              0
+Personal Loan         0
+Securities Account    0
+CD Account            0
+Online                0
+CreditCard            0
+
+Target Distribution:
+Personal Loan
+0    4520
+1     480
+
+Descriptive Statistics:
+                     count          mean          std     min       25%      50%       75%      max
+ID                  5000.0   2500.500000  1443.520003     1.0   1250.75   2500.5   3750.25   5000.0
+Age                 5000.0     45.338400    11.463166    23.0     35.00     45.0     55.00     67.0
+Experience          5000.0     20.104600    11.467954    -3.0     10.00     20.0     30.00     43.0
+Income              5000.0     73.774200    46.033729     8.0     39.00     64.0     98.00    224.0
+ZIP Code            5000.0  93152.503000  2121.852197  9307.0  91911.00  93437.0  94608.00  96651.0
+Family              5000.0      2.396400     1.147663     1.0      1.00      2.0      3.00      4.0
+CCAvg               5000.0      1.937938     1.747659     0.0      0.70      1.5      2.50     10.0
+Education           5000.0      1.881000     0.839869     1.0      1.00      2.0      3.00      3.0
+Mortgage            5000.0     56.498800   101.713802     0.0      0.00      0.0    101.00    635.0
+Personal Loan       5000.0      0.096000     0.294621     0.0      0.00      0.0      0.00      1.0
+Securities Account  5000.0      0.104400     0.305809     0.0      0.00      0.0      0.00      1.0
+CD Account          5000.0      0.060400     0.238250     0.0      0.00      0.0      0.00      1.0
+Online              5000.0      0.596800     0.490589     0.0      0.00      1.0      1.00      1.0
+CreditCard          5000.0      0.294000     0.455637     0.0      0.00      0.0      1.00      1.0
