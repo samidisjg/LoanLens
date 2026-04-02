@@ -4,6 +4,11 @@ This project predicts whether a customer will accept a personal loan using:
 - Base SVM
 - SMOTE + SVM
 
+## What Is SVM And How It Is Used Here
+Support Vector Machine, or SVM, is a supervised learning algorithm mainly used for classification. It works by finding the optimal decision boundary, called a hyperplane, that separates two classes with the maximum possible margin. The data points closest to this boundary are called support vectors, and they are the most important points in defining the classifier.
+
+In this project, SVM is used as a binary classification model to predict the `Personal Loan` target, where `0` means the customer did not accept the loan offer and `1` means the customer accepted it. Because the dataset contains both numerical and discrete features, the pipeline first preprocesses the data, scales the numerical attributes, and then applies the SVM classifier. Two SVM-based approaches are included: a base SVM with class balancing, and a `SMOTE + SVM` version to improve minority-class detection.
+
 ## Folder Structure
 - `dataset/` : source dataset
 - `src/svm_loan/` : core reusable code
@@ -58,6 +63,7 @@ Main figures:
 - `outputs/smote_svm/figures/train_test_metrics_smote_svm.png`
 
 ## Data Transformation Preview
+This image can be used in the demo to show the transformed data view used before SVM training.
 
 ![Data Transformation Preview](./outputs/analysis_helpers/data-transformed-svm.jpg)
 
@@ -83,4 +89,3 @@ Main figures:
 4. Show the final metrics report.
 5. Show confusion matrix and train/validation curves.
 6. Mention the saved model artifact.
-
