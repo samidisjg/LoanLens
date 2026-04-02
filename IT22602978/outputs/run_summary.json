@@ -1,0 +1,35 @@
+{
+  "high_correlation_pairs": [
+    {
+      "feature_1": "Age",
+      "feature_2": "Experience",
+      "abs_corr": 0.9942
+    }
+  ],
+  "kept_features_after_multicollinearity_check": [
+    "Experience",
+    "Income",
+    "Family",
+    "CCAvg",
+    "Education",
+    "Mortgage",
+    "Securities Account",
+    "CD Account",
+    "Online",
+    "CreditCard"
+  ],
+  "best_grid_params": {
+    "classifier__C": 0.1,
+    "classifier__class_weight": "balanced",
+    "classifier__penalty": "l2"
+  },
+  "chosen_threshold": 0.7000000000000004,
+  "smote_note": "SMOTE experiment executed successfully.",
+  "saved_figures": [
+    "figures/confusion_matrix_baseline_vs_improved.png",
+    "figures/roc_curve_baseline_vs_improved.png",
+    "figures/pr_curve_baseline_vs_improved.png",
+    "figures/improved_model_coefficients.png",
+    "figures/correlation_heatmap_numeric.png"
+  ]
+}

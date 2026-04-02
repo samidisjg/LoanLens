@@ -1,144 +1,119 @@
-# Machine Learning Assignment Report (Draft)
+# Advanced Supervised Learning Report: Personal Loan Prediction (Logistic Regression Only)
 
-## 1. Problem Statement
-The objective is to predict whether a bank customer will accept a personal loan offer (`Personal Loan`: 1 = Yes, 0 = No). This is a supervised binary classification problem.
+## Introduction
+This study develops an advanced Logistic Regression pipeline for predicting whether a bank customer will accept a personal loan offer (`Personal Loan`: 1/0). The objective is to improve predictive performance while maintaining model interpretability and to present a clear precision-recall trade-off analysis.
 
-## 2. Dataset
-- Dataset name: Bank Personal Loan Modelling
-- File used: `dataset/Bank_Personal_Loan_Modelling.csv`
-- Number of records: 5,000
-- Number of columns: 14
-- Target variable: `Personal Loan`
+## Dataset Description
+- Dataset: Bank Personal Loan Modelling
+- File: `dataset/Bank_Personal_Loan_Modelling.csv`
+- Size: 5,000 records
+- Class distribution: 4,520 negatives, 480 positives
 
-Key attributes include customer demographics (`Age`, `Experience`, `Family`, `Education`), financial indicators (`Income`, `CCAvg`, `Mortgage`), and account/service usage (`Securities Account`, `CD Account`, `Online`, `CreditCard`).
+The class imbalance motivates the use of recall-sensitive evaluation and imbalance-aware training strategies.
 
-## 3. Data Preprocessing
-Steps performed:
-1. Loaded CSV data and checked for missing values.
-2. Clipped negative values in `Experience` to 0 because negative years are not realistic.
-3. Dropped `ID` and `ZIP Code` from model inputs (`ID` is purely an identifier; `ZIP Code` is high-cardinality location-like data in this baseline).
-4. Standardized numeric features.
-5. One-hot encoded categorical/discrete features.
-6. Used stratified 80/20 train-test split due to class imbalance.
+## Methodology
 
-Class distribution:
-- Class 0 (No Loan): 4,520
-- Class 1 (Loan): 480
+### 1. Advanced Feature Engineering
+Added engineered features:
+- `income_per_family = Income / Family`
+- `income_x_education = Income * Education`
+- `ccavg_x_income = CCAvg * Income`
+- `mortgage_to_income = Mortgage / (Income + 1)`
+- `age_bin` (binned age category)
+- `income_bin` (binned income category)
 
-## 4. Algorithm and Justification
-Logistic Regression was selected because:
-- The target is binary.
-- It is computationally efficient.
-- It provides interpretable decision behavior and class probabilities.
-- It is a strong baseline for tabular binary classification.
+Removed:
+- `ID`, `ZIP Code`
 
-## 5. Implementation
-Implementation is provided in:
-- `src/logistic_regression_loan.py`
-- `notebooks/logistic_regression_assignment.ipynb`
+### 2. Multicollinearity Handling
+- High correlation detected between `Age` and `Experience` (`|r| = 0.9942`)
+- `Age` was dropped (we retained the more target-relevant feature)
+- VIF-based filtering then removed `ccavg_x_income` (VIF 12.2742)
 
-The implementation includes a preprocessing + model pipeline, evaluation metrics, confusion matrix, classification report, and 5-fold cross-validation ROC-AUC.
-It also includes experiment tracking to show how model performance changes with:
-- regularization strength (`C`)
-- class weighting
-- decision threshold
-- training set size
+Final VIF diagnostics are available in `outputs/final_vif_table.csv`.
 
-## 6. Results
-Using an 80/20 stratified split (`random_state = 42`), the baseline Logistic Regression produced:
+### 3. Logistic Regression Variants Evaluated
+1. Baseline LR (`L2`, `C=1`, threshold 0.5)
+2. Tuned LR (`GridSearchCV`: `C`, `penalty`, `solver`)
+3. Tuned LR with optimized threshold
+4. Balanced LR (`class_weight='balanced'`)
+5. SMOTE + LR
+6. Calibrated LR (Platt vs Isotonic, selected by validation Brier score)
 
-- Accuracy: 0.9580
-- Precision: 0.8553
-- Recall: 0.6771
-- F1-score: 0.7558
-- ROC-AUC: 0.9667
+Best tuned parameters:
+- `C = 2`, `penalty = l1`, `solver = liblinear`
 
-Confusion matrix `[[TN, FP], [FN, TP]]`:
-- `[[893, 11], [31, 65]]`
+### 4. Threshold Optimization
+Validation threshold sweep (`0.05` to `0.95`) used:
+- F1-score maximization
+- Youden’s J maximization
 
-Cross-validation:
-- 5-fold ROC-AUC mean: ~0.964
-- 5-fold ROC-AUC std: low (stable performance)
-- 5-fold F1-score mean: 0.7490
-- 5-fold F1-score std: 0.0153
+Results:
+- Best F1 threshold: `0.35`
+- Best Youden’s J threshold: `0.23`
 
-### 6.1 How Results Change with Training Settings
+### 5. Calibration
+Compared:
+- Platt scaling (`sigmoid`)
+- Isotonic regression
 
-| Setting | C | Class Weight | Threshold | Accuracy | Precision | Recall | F1 | ROC-AUC |
-|---|---:|---|---:|---:|---:|---:|---:|---:|
-| threshold_0.35 | 1.0 | None | 0.35 | 0.9560 | 0.7766 | 0.7604 | 0.7684 | 0.9667 |
-| baseline | 1.0 | None | 0.50 | 0.9580 | 0.8553 | 0.6771 | 0.7558 | 0.9667 |
-| weaker_reg | 5.0 | None | 0.50 | 0.9560 | 0.8421 | 0.6667 | 0.7442 | 0.9653 |
-| stronger_reg | 0.1 | None | 0.50 | 0.9490 | 0.8462 | 0.5729 | 0.6832 | 0.9684 |
-| balanced_weight | 1.0 | balanced | 0.50 | 0.9140 | 0.5294 | 0.9375 | 0.6767 | 0.9693 |
+Chosen calibrated model: **Calibrated LR (Isotonic)**.
 
-Interpretation:
-1. Lowering the threshold from 0.50 to 0.35 improved recall (0.6771 -> 0.7604) and improved F1 (0.7558 -> 0.7684), while precision dropped.
-2. `class_weight='balanced'` gave very high recall but significantly lower precision and accuracy.
-3. Stronger regularization (`C=0.1`) reduced recall and F1 in this dataset.
+## Results and Discussion
 
-### 6.2 Effect of Training Set Size
+### Logistic Regression Metrics Comparison
 
-| Train Ratio | Train Samples | Test Samples | Accuracy | Precision | Recall | F1 | ROC-AUC |
-|---:|---:|---:|---:|---:|---:|---:|---:|
-| 0.50 | 2500 | 2500 | 0.9588 | 0.8785 | 0.6625 | 0.7553 | 0.9651 |
-| 0.60 | 3000 | 2000 | 0.9625 | 0.8980 | 0.6875 | 0.7788 | 0.9718 |
-| 0.70 | 3499 | 1501 | 0.9614 | 0.8909 | 0.6806 | 0.7717 | 0.9689 |
-| 0.80 | 4000 | 1000 | 0.9580 | 0.8553 | 0.6771 | 0.7558 | 0.9667 |
+| Model | Threshold | Accuracy | Precision | Recall | F1-score | ROC-AUC | PR-AUC |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Calibrated LR (Isotonic) | 0.50 | 0.971 | 0.868 | 0.823 | 0.845 | 0.988 | 0.932 |
+| Tuned LR (Best F1 Thr) | 0.35 | 0.969 | 0.828 | 0.854 | 0.841 | 0.989 | 0.933 |
+| Tuned LR (0.50) | 0.50 | 0.969 | 0.874 | 0.792 | 0.831 | 0.989 | 0.933 |
+| Baseline LR | 0.50 | 0.967 | 0.889 | 0.750 | 0.814 | 0.986 | 0.924 |
+| SMOTE LR | 0.50 | 0.933 | 0.596 | 0.938 | 0.729 | 0.987 | 0.923 |
+| Balanced LR | 0.50 | 0.920 | 0.548 | 0.958 | 0.697 | 0.986 | 0.915 |
 
-Interpretation:
-1. Performance is generally stable across training sizes.
-2. Best F1 in this run appeared at train ratio 0.60.
-3. No severe overfitting pattern is visible from these splits.
+### Trade-off Interpretation
+- Baseline LR gives stronger precision but lower recall.
+- Tuned LR with threshold `0.35` improves recall with moderate precision drop.
+- Balanced LR and SMOTE aggressively increase recall but reduce precision substantially.
+- Calibrated LR (Isotonic) provides the best overall F1 among LR variants with strong ROC-AUC.
 
-### 6.3 Training Visualizations (Heatmaps and Plots)
+### Best Model (Within Logistic Regression Family)
+- **Best overall LR variant:** `Calibrated LR (Isotonic)`
+- **Best threshold for recall-sensitive tuned LR:** `0.35`
 
-Generated image files:
-- `figures/correlation_heatmap.png`
-- `figures/confusion_matrix_heatmap.png`
-- `figures/settings_metrics_heatmap.png`
-- `figures/training_size_performance.png`
+## Visualizations (LR-only)
+Generated files:
+- `figures/confusion_matrices_lr_variants.png`
+- `figures/roc_curves_lr_variants.png`
+- `figures/pr_curves_lr_variants.png`
+- `figures/threshold_vs_f1_youden.png`
+- `figures/calibration_curves.png`
+- `figures/lr_feature_importance.png`
 
-Correlation heatmap:
+## Critical Analysis
+1. False negatives were reduced by threshold tuning and imbalance-aware strategies.
+2. Multicollinearity control (correlation + VIF) improved coefficient stability.
+3. Performance gains are mainly due to combined effects of feature engineering, regularization tuning, and threshold calibration rather than a single change.
 
-![Feature Correlation Heatmap](../figures/correlation_heatmap.png)
+## Limitations
+1. Evaluation is on one dataset split (no external dataset).
+2. Engineered features are domain-guided but not exhaustive.
+3. Business cost matrix was not explicitly optimized.
 
-Confusion matrix heatmap:
+## Future Improvements
+1. Optimize threshold using explicit business costs.
+2. Use repeated/nested CV for more stable estimates.
+3. Add model monitoring and calibration drift checks for deployment.
 
-![Confusion Matrix Heatmap](../figures/confusion_matrix_heatmap.png)
+## Reproducibility
+Run command:
+```bash
+MPLCONFIGDIR=/tmp/matplotlib python3 src/logistic_regression_loan.py
+```
 
-Metrics heatmap across training settings:
-
-![Settings Metrics Heatmap](../figures/settings_metrics_heatmap.png)
-
-Performance vs training size:
-
-![Training Size Performance Plot](../figures/training_size_performance.png)
-
-## 7. Critical Analysis and Discussion
-Strengths:
-- High ROC-AUC indicates good ranking/discrimination ability.
-- High precision means predicted positives are often correct.
-
-Limitations:
-- Recall is moderate; some true positive loan-accepting customers are missed.
-- The dataset is imbalanced, so accuracy alone can be misleading.
-
-Possible improvements:
-1. Tune threshold to increase recall if the business prefers catching more potential borrowers.
-2. Perform grid-search for `C`, penalty, and threshold jointly.
-3. Compare with additional classifiers (Decision Tree, Random Forest, SVM, Gradient Boosting/XGBoost).
-4. Add calibration checks for predicted probabilities.
-
-## 8. Assignment Rule Check
-The assignment description specifies: for supervised learning (team size 4), **4 distinct algorithms** should be applied.
-
-This draft currently includes only **Logistic Regression**. If your team has 4 members and must comply fully, add 3 additional supervised algorithms and include a comparison table in the final report.
-
-## 9. Individual Contribution (Template)
-- Member A: Data preprocessing and EDA
-- Member B: Logistic Regression implementation and metrics
-- Member C: Comparative model implementation
-- Member D: Report writing, critical analysis, and presentation
-
-(Replace with actual member names and IDs.)
+Outputs:
+- `outputs/all_model_metrics.csv`
+- `outputs/threshold_analysis.csv`
+- `outputs/final_vif_table.csv`
+- `outputs/advanced_run_summary.json`

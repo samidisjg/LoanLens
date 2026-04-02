@@ -1,0 +1,44 @@
+{
+  "best_model": "Calibrated LR (Isotonic)",
+  "best_threshold_f1": 0.3500000000000001,
+  "best_threshold_youden_j": 0.23000000000000004,
+  "best_tuned_params": {
+    "clf__C": 2,
+    "clf__penalty": "l1",
+    "clf__solver": "liblinear"
+  },
+  "manual_multicollinearity_handling": {
+    "manual_drop": [
+      "Age"
+    ],
+    "details": [
+      {
+        "pair": [
+          "Age",
+          "Experience"
+        ],
+        "corr": 0.9942,
+        "dropped": "Age",
+        "rule": "drop feature with lower |corr with target|"
+      }
+    ]
+  },
+  "vif_dropped_features": [
+    {
+      "feature": "ccavg_x_income",
+      "vif": 12.2742
+    }
+  ],
+  "smote_note": "SMOTE executed successfully.",
+  "calibration_choice": "Calibrated LR (Isotonic)",
+  "brier_sigmoid": 0.022714842069133816,
+  "brier_isotonic": 0.021396094103553986,
+  "saved_figures": [
+    "figures/confusion_matrices_lr_variants.png",
+    "figures/roc_curves_lr_variants.png",
+    "figures/pr_curves_lr_variants.png",
+    "figures/threshold_vs_f1_youden.png",
+    "figures/calibration_curves.png",
+    "figures/lr_feature_importance.png"
+  ]
+}
