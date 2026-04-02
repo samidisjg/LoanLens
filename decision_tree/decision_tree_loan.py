@@ -378,36 +378,48 @@ def plot_model_comparison(
     positions = range(len(metric_names))
     width = 0.25
 
-    plt.figure(figsize=(8, 5))
-    plt.bar(
+    fig, ax = plt.subplots(figsize=(8, 5))
+    baseline_bars = ax.bar(
         [position - width for position in positions],
         baseline_values,
         width=width,
         label="Baseline",
         color="#4C78A8",
     )
-    plt.bar(
+    smote_bars = ax.bar(
         list(positions),
         smote_values,
         width=width,
         label="SMOTE",
         color="#F58518",
     )
-    plt.bar(
+    tuned_bars = ax.bar(
         [position + width for position in positions],
         tuned_values,
         width=width,
         label="Tuned",
         color="#54A24B",
     )
-    plt.xticks(list(positions), metric_names)
-    plt.ylim(0, 1.05)
-    plt.ylabel("Score")
-    plt.title("Baseline vs SMOTE vs Tuned Metrics")
-    plt.legend()
-    plt.tight_layout()
+    ax.set_xticks(list(positions), metric_names)
+    ax.set_ylim(0, 1.08)
+    ax.set_ylabel("Score")
+    ax.set_title("Baseline vs SMOTE vs Tuned Metrics")
+    ax.legend()
 
-    fig = plt.gcf()
+    for bars in [baseline_bars, smote_bars, tuned_bars]:
+        for bar in bars:
+            height = bar.get_height()
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                height + 0.015,
+                f"{height * 100:.2f}%",
+                ha="center",
+                va="bottom",
+                fontsize=8,
+                rotation=90,
+            )
+
+    plt.tight_layout()
     capture_plot("Model Metrics Comparison", fig)
     plt.close(fig)
 
