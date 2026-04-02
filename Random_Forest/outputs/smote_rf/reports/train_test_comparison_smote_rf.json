@@ -1,0 +1,18 @@
+{
+  "train_metrics": {
+    "accuracy": 0.98775,
+    "precision": 0.9075425790754258,
+    "recall": 0.9713541666666666,
+    "f1_score": 0.9383647798742139,
+    "roc_auc": 0.9977696061485988,
+    "average_precision": 0.9802680884504578
+  },
+  "test_metrics": {
+    "accuracy": 0.981,
+    "precision": 0.8532110091743119,
+    "recall": 0.96875,
+    "f1_score": 0.9073170731707317,
+    "roc_auc": 0.996439435840708,
+    "average_precision": 0.9698872834390212
+  }
+}
